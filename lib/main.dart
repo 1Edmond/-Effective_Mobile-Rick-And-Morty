@@ -69,7 +69,9 @@ class _MyHomePageState extends State<MyHomePage> {
     return ThemeSwitchingArea(
       child: Scaffold(
         bottomNavigationBar: CurvedNavigationBar(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor, // Dynamique
+          index: _index,
+          animationDuration: Duration(milliseconds: 500),
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           color: Theme.of(context).bottomNavigationBarTheme.selectedItemColor ?? Colors.blueAccent,
           items: <Widget>[
             Icon(Icons.home, size: 30, color: Colors.white),
