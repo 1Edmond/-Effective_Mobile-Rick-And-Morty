@@ -1,0 +1,12 @@
+import 'package:get_it/get_it.dart';
+import 'package:rick_and_morty/features/characters/data/databases/character_database.dart';
+import 'package:rick_and_morty/features/characters/data/repositories/characters_repository_impl.dart';
+import 'package:rick_and_morty/features/characters/data/sources/character_data_source.dart';
+import 'package:rick_and_morty/features/characters/data/sources/character_local_data_source.dart';
+import 'package:rick_and_morty/features/characters/data/sources/character_remote_data_source.dart';
+import 'package:rick_and_morty/features/characters/domains/repositories/characters_repository.dart';
+import 'package:rick_and_morty/features/characters/domains/usecases/get_all_characters.dart';
+import 'package:http/http.dart' as http;
+
+final GetIt getIt = GetIt.instance;
+
