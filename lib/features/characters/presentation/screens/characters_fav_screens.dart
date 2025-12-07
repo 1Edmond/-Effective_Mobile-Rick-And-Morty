@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:rick_and_morty/features/characters/presentation/controllers/characters_fav_list_screens_controller.dart';
-import 'package:rick_and_morty/features/characters/presentation/interfaces/characters_screem_interface.dart';
 import 'package:rick_and_morty/features/characters/presentation/screens/characters_item.dart';
 import 'package:get/get.dart';
 import 'package:rick_and_morty/features/characters/presentation/widgets/character_loading_indicator.dart';
@@ -14,7 +13,7 @@ class CharactersFavListScreens extends StatefulWidget {
 }
 
 class _CharactersFavListScreensState extends State<CharactersFavListScreens> with WidgetsBindingObserver {
-  late CharactersScreemInterface characterController;
+  late CharactersFavListScreensController characterController;
   final ScrollController scrollController = ScrollController();
 
   @override
@@ -23,10 +22,7 @@ class _CharactersFavListScreensState extends State<CharactersFavListScreens> wit
 
     WidgetsBinding.instance.addObserver(this);
 
-    characterController = Get.put<CharactersScreemInterface>(
-      Charactersfavlistscreenscontroller(),
-      tag: 'fav',
-    );
+    characterController = Get.find<CharactersFavListScreensController>(tag: "fav");
 
 
     scrollController.addListener(() async {
@@ -36,14 +32,14 @@ class _CharactersFavListScreensState extends State<CharactersFavListScreens> wit
     });
 
 
-    characterController.loadCharacters();
+    characterController.loadFavoritesCharacters();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
 
     if (state == AppLifecycleState.resumed) {
-      characterController.loadCharacters();
+      characterController.loadFavoritesCharacters();
     }
   }
 
@@ -59,32 +55,32 @@ class _CharactersFavListScreensState extends State<CharactersFavListScreens> wit
     return Scaffold(
       body: Stack(
         children: [
-          Column(
-            children: [
-              Expanded(
-                child: Obx(() => ListView.builder(
-                  controller: scrollController,
-                  itemCount: characterController.characters.length,
-                  itemBuilder: (context, index) {
-                    final character = characterController.characters[index];
-                    return CharactersItem(
-                      title: character.name,
-                      imageUrl: character.image,
-                      tag: character.gender,
-                      time: character.type,
-                      page: "fav",
-                      characterId: character.id,
-                    );
-                  },
-                )),
-              ),
-            ],
-          ),
+
           Obx(() => Visibility(
             visible: !characterController.isLoading.value,
             child: characterController.characters.isEmpty ? Center(
               child: Text("Нет данных", style: TextStyle(fontSize: 25),),
-            ) : SizedBox(),
+            ) :    Column(
+              children: [
+                Expanded(
+                  child: Obx(() => ListView.builder(
+                    controller: scrollController,
+                    itemCount: characterController.characters.length,
+                    itemBuilder: (context, index) {
+                      final character = characterController.characters[index];
+                      return CharactersItem(
+                        title: character.name,
+                        imageUrl: character.image,
+                        tag: character.gender,
+                        type: character.type,
+                        page: "fav",
+                        characterId: character.id,
+                      );
+                    },
+                  )),
+                ),
+              ],
+            ),
           )),
           Obx(() => Visibility(
             visible: characterController.isLoading.value,

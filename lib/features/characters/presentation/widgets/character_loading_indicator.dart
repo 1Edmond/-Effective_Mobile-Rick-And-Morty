@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:lottie/lottie.dart';
 
 class CharacterLoadingIndicator extends StatefulWidget {
   const CharacterLoadingIndicator({super.key});
@@ -11,14 +11,11 @@ class CharacterLoadingIndicator extends StatefulWidget {
 class _CharacterLoadingIndicatorState extends State<CharacterLoadingIndicator> {
   @override
   Widget build(BuildContext context) {
-    return SpinKitFadingCircle(
-      itemBuilder: (BuildContext context, int index) {
-        return DecoratedBox(
-          decoration: BoxDecoration(
-            color: index.isEven ? Colors.red : Colors.green,
-          ),
-        );
-      },
+    return Center(
+      child: SizedBox(
+        width: 100,
+        child: Lottie.asset('assets/animations/Cosmos.json', frameRate: FrameRate(200)),
+      ),
     );
   }
 }

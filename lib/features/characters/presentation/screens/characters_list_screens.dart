@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rick_and_morty/features/characters/presentation/controllers/characters_list_screens_controller.dart';
-import 'package:rick_and_morty/features/characters/presentation/interfaces/characters_screem_interface.dart';
 import 'package:rick_and_morty/features/characters/presentation/screens/characters_item.dart';
 import 'package:rick_and_morty/features/characters/presentation/widgets/character_loading_indicator.dart';
 
@@ -13,7 +12,7 @@ class CharactersListScreens extends StatefulWidget {
 }
 
 class _CharactersListScreensState extends State<CharactersListScreens> with WidgetsBindingObserver {
-  late CharactersScreemInterface characterController;
+  late CharactersListScreensController characterController;
   final ScrollController scrollController = ScrollController();
 
   @override
@@ -23,10 +22,7 @@ class _CharactersListScreensState extends State<CharactersListScreens> with Widg
     WidgetsBinding.instance.addObserver(this);
 
 
-    characterController = Get.put<CharactersScreemInterface>(
-      CharactersListScreensController(),
-      tag: 'list',
-    );
+    characterController = Get.find<CharactersListScreensController>(tag: "list");
 
 
     scrollController.addListener(() {
@@ -36,16 +32,20 @@ class _CharactersListScreensState extends State<CharactersListScreens> with Widg
     });
 
 
-    characterController.loadCharacters();
+    characterController.loadCharacters().then(
+        (r) {
+          characterController.loadFavoritesData();
+        }
+    );
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-
-    if (state == AppLifecycleState.resumed) {
-      characterController.loadCharacters();
-    }
-  }
+  // @override
+  // void didChangeAppLifecycleState(AppLifecycleState state) {
+  //
+  //   if (state == AppLifecycleState.resumed) {
+  //     characterController.loadCharacters();
+  //   }
+  // }
 
   @override
   void dispose() {
@@ -62,20 +62,25 @@ class _CharactersListScreensState extends State<CharactersListScreens> with Widg
           Column(
             children: [
               Expanded(
-                child: Obx(() => ListView.builder(
-                  controller: scrollController,
-                  itemCount: characterController.characters.length,
-                  itemBuilder: (context, index) {
-                    final character = characterController.characters[index];
-                    return CharactersItem(
-                      title: character.name,
-                      imageUrl: character.image,
-                      tag: character.gender,
-                      time: character.type,
-                      isAnimationEnable: true,
-                      characterId: character.id,
-                    );
-                  },
+                child: Obx(() => Visibility(
+                  visible: characterController.characters.isNotEmpty
+                        && !characterController.isLoading.value,
+                  child: ListView.builder(
+                    controller: scrollController,
+                    itemCount: characterController.characters.length,
+                    itemBuilder: (context, index) {
+                      final character = characterController.characters[index];
+                      return CharactersItem(
+                        title: character.name,
+                        imageUrl: character.image,
+                        tag: character.gender,
+                        type: character.type,
+
+                        isAnimationEnable: true,
+                        characterId: character.id,
+                      );
+                    },
+                  ),
                 )),
               ),
             ],

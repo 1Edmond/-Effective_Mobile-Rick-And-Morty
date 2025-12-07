@@ -1,5 +1,6 @@
+import 'package:rick_and_morty/features/characters/data/models/character.dart';
 import 'package:rick_and_morty/features/characters/data/models/character_response.dart';
-import '../models/character.dart';
+
 
 
 abstract class CharactersRemoteDataSource {

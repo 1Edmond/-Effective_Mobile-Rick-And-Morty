@@ -1,6 +1,6 @@
 {
-    "name": "rick_and_morty",
-    "short_name": "rick_and_morty",
+    "name": "effective_mobile",
+    "short_name": "effective_mobile",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

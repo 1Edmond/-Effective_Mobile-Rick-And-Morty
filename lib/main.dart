@@ -1,15 +1,13 @@
-import 'package:animated_theme_switcher/animated_theme_switcher.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:rick_and_morty/core/configs/app_routes.dart';
-import 'package:rick_and_morty/features/characters/presentation/screens/characters_fav_screens.dart';
-import 'package:rick_and_morty/features/characters/presentation/screens/characters_list_screens.dart';
+import 'package:rick_and_morty/features/home_page.dart';
 import 'package:rick_and_morty/shared/services/di_service.dart';
+import 'package:rick_and_morty/shared/themes/theme_controller.dart';
 import 'package:rick_and_morty/shared/themes/theme_data.dart';
-import 'dependencies_injection.dart' as di;
 import 'package:flutter/scheduler.dart' show timeDilation;
+import 'package:rick_and_morty/shared/themes/theme_ripple_overlay.dart';
+
 
 var isDarkMode = false;
 
@@ -29,84 +27,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _box = GetStorage();
-    final initTheme = _box.read("isDarkMode") != null ?
-    _box.read("isDarkMode") as bool ? darkTheme : lightTheme : lightTheme;
-    isDarkMode = initTheme == darkTheme ;
-    return ThemeProvider(
-      initTheme: initTheme,
-      builder: (_, myTheme) {
-        return GetMaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Flutter Demo',
-          theme: myTheme,
-          initialRoute: AppRoutes.home,
-          getPages: AppRoutes.pages,
-        );
-      },
-    );
-  }
-}
+    final themeController = Get.find<ThemeController>();
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-
-  int _index = 0;
- final pages = [
-   CharactersListScreens(),
-   CharactersFavListScreens(),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    final _box = GetStorage();
-    return ThemeSwitchingArea(
-      child: Scaffold(
-        bottomNavigationBar: CurvedNavigationBar(
-          index: _index,
-          animationDuration: Duration(milliseconds: 500),
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          color: Theme.of(context).bottomNavigationBarTheme.selectedItemColor ?? Colors.blueAccent,
-          items: <Widget>[
-            Icon(Icons.home, size: 30, color: Colors.white),
-            Icon(Icons.favorite, size: 30, color: Colors.white),
-          ],
-          onTap: (index) {
-            setState(() {
-              _index = index;
-            });
-          },
-        ),
-        appBar: AppBar(
-          title: const Text(
-            'Rick and Morty',
-          ),
-        ),
-        body: pages[_index],
-        floatingActionButton: ThemeSwitcher.withTheme(
-          builder: (_, switcher, theme) {
-            return FloatingActionButton(
-              onPressed: () {
-                _box.write('isDarkMode', !isDarkMode);
-                return switcher.changeTheme(
-                theme: theme.brightness == Brightness.light
-                    ? darkTheme
-                    : lightTheme,
-                );
-                },
-              child: Icon(theme.brightness == Brightness.light
-                  ? Icons.brightness_3
-                  : Icons.wb_sunny),
-            );
-          },
-        ),
+    return Obx(() => GetMaterialApp(
+      title: 'Rick And Morty',
+      debugShowCheckedModeBanner: false,
+      theme: themeController.isDark.value
+          ? darkTheme
+          : lightTheme,
+      home: Stack(
+        children: [
+          const HomePage(),
+          const ThemeRippleOverlay(),
+        ],
       ),
-    );
+    ));
   }
 }

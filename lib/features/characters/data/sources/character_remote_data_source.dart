@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:rick_and_morty/features/characters/data/models/character.dart';
 import 'package:rick_and_morty/features/characters/data/models/character_response.dart';
 import 'package:rick_and_morty/features/characters/data/sources/character_data_source.dart';
-import '../models/character.dart';
 
 
 class CharactersRemoteDataSourceImpl implements CharactersRemoteDataSource {
@@ -17,10 +17,12 @@ class CharactersRemoteDataSourceImpl implements CharactersRemoteDataSource {
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
       final List<dynamic> results = data['results'];
-      var chractere_response = CharacterResponse();
-      chractere_response.nextPage = data['info']['next'];
-      chractere_response.data = results.map((character) => CharacterModel.fromJson(character)).toList();
-      return chractere_response;
+
+      var chracterResponse = CharacterResponse();
+      chracterResponse.nextPage = data['info']['next'];
+      chracterResponse.data = results.map((character) => CharacterModel.fromJson(character)).toList();
+
+      return chracterResponse;
     } else {
       throw Exception('Failed to load characters');
     }
